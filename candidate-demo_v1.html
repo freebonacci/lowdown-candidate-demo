@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lowdown — Head of Growth · Fintra</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap');
+  :root{
+    --ivory:#FAFAF7;--paper:#F1EFE8;--line:#D3D1C7;--line-soft:#E8E6DF;
+    --ink:#2C2C2A;--ink-2:#444441;--ink-3:#5F5E5A;--muted:#888780;--muted-2:#B4B2A9;
+    --forest:#0F6E56;--forest-deep:#085041;--mint:#E1F5EE;--mint-2:#CFEBDF;
+    --sage:#5DCAA5;--clay:#C96D4A;--amber:#D8A24A;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;overflow:hidden}
+  body{font-family:'DM Sans',sans-serif;background:var(--ivory);color:var(--ink);-webkit-font-smoothing:antialiased;display:flex;flex-direction:column}
+
+  .topbar{display:flex;align-items:center;padding:.85rem 1.5rem;background:rgba(250,250,247,.92);backdrop-filter:blur(10px);border-bottom:.5px solid var(--line-soft);flex-shrink:0;z-index:10}
+  .logo{font-family:'Lora',serif;font-size:18px;color:var(--ink);text-decoration:none;letter-spacing:-.3px}
+  .logo span{color:var(--forest)}
+
+  .main{display:grid;grid-template-columns:1fr 420px;flex:1;overflow:hidden;min-height:0}
+
+  .jd-panel{overflow-y:auto;padding:2rem 2.5rem;border-right:.5px solid var(--line)}
+  .jd-panel::-webkit-scrollbar{width:4px}
+  .jd-panel::-webkit-scrollbar-thumb{background:var(--line);border-radius:2px}
+  .jd-eyebrow{display:flex;align-items:center;gap:8px;margin-bottom:1.25rem}
+  .jd-eyebrow .co{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:.4px;text-transform:uppercase}
+  .jd-eyebrow .tag{background:var(--mint);color:var(--forest);font-size:11px;font-weight:500;padding:3px 8px;border-radius:5px}
+  h1.jd-title{font-family:'Lora',serif;font-size:32px;font-weight:400;letter-spacing:-.5px;line-height:1.1;margin-bottom:.5rem}
+  .jd-meta-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:1.5rem;align-items:center}
+  .jd-meta-row .meta{font-size:13px;color:var(--ink-3);font-weight:300}
+  .jd-meta-row .dot{width:3px;height:3px;border-radius:50%;background:var(--muted-2);display:inline-block}
+  .pills{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:1.75rem}
+  .pill{background:var(--paper);border:.5px solid var(--line-soft);border-radius:5px;padding:4px 10px;font-size:12px;color:var(--ink-3)}
+  hr.divider{border:none;border-top:.5px solid var(--line-soft);margin:1.5rem 0}
+  .jd-section{margin-bottom:1.5rem}
+  .jd-section-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.8px;text-transform:uppercase;margin-bottom:.6rem}
+  .jd-body{font-size:14px;color:var(--ink-2);line-height:1.75;font-weight:300}
+  .jd-list{list-style:none}
+  .jd-list li{font-size:14px;color:var(--ink-2);line-height:1.65;padding:3px 0;display:flex;gap:10px;font-weight:300}
+  .jd-list li::before{content:'–';color:var(--muted-2);flex-shrink:0}
+  .jd-apply-btn{display:block;width:100%;background:var(--forest);color:var(--mint);border:none;padding:13px;border-radius:8px;font-size:15px;font-family:'DM Sans',sans-serif;cursor:pointer;font-weight:500;text-align:center;margin-top:2rem;transition:background .2s}
+  .jd-apply-btn:hover{background:var(--forest-deep)}
+
+  .chat-panel{display:flex;flex-direction:column;background:#FFF;overflow:hidden}
+  .chat-header{padding:1rem 1.25rem;border-bottom:.5px solid var(--line-soft);flex-shrink:0}
+  .chat-header-top{display:flex;align-items:center;gap:10px}
+  .chat-avatar{width:32px;height:32px;border-radius:50%;background:var(--mint);color:var(--forest);display:flex;align-items:center;justify-content:center;font-family:'Lora',serif;font-size:16px;flex-shrink:0}
+  .chat-header-title{font-size:14px;font-weight:500;color:var(--ink)}
+  .chat-header-sub{font-size:11px;color:var(--muted);margin-top:1px}
+
+  .chat-messages{flex:1;overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:10px}
+  .chat-messages::-webkit-scrollbar{width:3px}
+  .chat-messages::-webkit-scrollbar-thumb{background:var(--line);border-radius:2px}
+  .bubble-wrap{display:flex;flex-direction:column;gap:2px}
+  .bubble-wrap.them{align-items:flex-start}
+  .bubble-wrap.us{align-items:flex-end}
+  .bubble{padding:10px 13px;border-radius:12px;font-size:13.5px;line-height:1.55;max-width:88%;animation:bubbleIn .25s cubic-bezier(.2,.8,.2,1)}
+  @keyframes bubbleIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .bubble.them{background:var(--paper);color:var(--ink);border-bottom-left-radius:3px}
+  .bubble.us{background:var(--forest);color:var(--mint);border-bottom-right-radius:3px}
+
+  .typing-bubble{background:var(--paper);border-radius:12px;border-bottom-left-radius:3px;padding:11px 14px;display:inline-flex;gap:4px;align-items:center}
+  .typing-dot{width:5px;height:5px;border-radius:50%;background:var(--muted-2);animation:typing 1.2s ease infinite}
+  .typing-dot:nth-child(2){animation-delay:.2s}
+  .typing-dot:nth-child(3){animation-delay:.4s}
+  @keyframes typing{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-4px)}}
+
+  .chat-input-area{padding:.75rem 1rem;border-top:.5px solid var(--line-soft);display:flex;gap:8px;align-items:flex-end;flex-shrink:0;background:#FFF}
+  .chat-input{flex:1;border:.5px solid var(--line);border-radius:20px;padding:9px 14px;font-size:13px;font-family:'DM Sans',sans-serif;background:var(--ivory);color:var(--ink);outline:none;transition:border-color .2s;resize:none;max-height:80px;line-height:1.5}
+  .chat-input:focus{border-color:var(--forest)}
+  .chat-send{width:34px;height:34px;border-radius:50%;background:var(--forest);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .2s}
+  .chat-send:hover{background:var(--forest-deep)}
+  .chat-send:disabled{opacity:.4;cursor:default}
+  .send-icon{width:0;height:0;border-top:5px solid transparent;border-bottom:5px solid transparent;border-left:9px solid var(--mint);margin-left:2px}
+  .chat-footer-note{font-size:10.5px;color:var(--muted-2);font-family:'JetBrains Mono',monospace;text-align:center;padding:.4rem 0 .1rem;letter-spacing:.2px}
+
+  @media(max-width:860px){
+    html,body{overflow:auto}
+    .main{grid-template-columns:1fr;height:auto;overflow:visible}
+    .jd-panel{overflow:visible;border-right:none;border-bottom:.5px solid var(--line);max-height:none}
+    .chat-panel{height:600px}
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a class="logo" href="#">low<span>down</span></a>
+</div>
+
+<div class="main">
+
+  <!-- LEFT: JD -->
+  <div class="jd-panel">
+    <div class="jd-eyebrow">
+      <span class="co">Fintra</span>
+      <span class="tag">Series B</span>
+      <span class="tag" style="background:var(--paper);color:var(--ink-3);border:.5px solid var(--line)">London · Hybrid</span>
+    </div>
+    <h1 class="jd-title">Head of Growth</h1>
+    <div class="jd-meta-row">
+      <span class="meta">£90,000 – £120,000</span>
+      <span class="dot"></span>
+      <span class="meta">Equity included</span>
+      <span class="dot"></span>
+      <span class="meta">Full-time</span>
+      <span class="dot"></span>
+      <span class="meta">5+ years exp.</span>
+    </div>
+    <div class="pills">
+      <span class="pill">People management</span>
+      <span class="pill">B2C growth</span>
+      <span class="pill">Paid acquisition</span>
+      <span class="pill">Retention</span>
+    </div>
+
+    <div class="jd-section">
+      <div class="jd-section-label">The role</div>
+      <p class="jd-body">Fintra is seeking a senior growth leader to take ownership of acquisition and retention as the business scales toward a Series C raise. The successful candidate will work closely with the CEO and product leadership to drive performance across paid, organic, and partnership channels, and will inherit a capable team ready for senior direction.</p>
+    </div>
+
+    <hr class="divider">
+
+    <div class="jd-section">
+      <div class="jd-section-label">Responsibilities</div>
+      <ul class="jd-list">
+        <li>Own the full growth model — acquisition, activation, and retention</li>
+        <li>Scale paid acquisition across Google and Meta; identify and test new channels</li>
+        <li>Lead and develop a team of three growth specialists</li>
+        <li>Partner with product on onboarding flows and lifecycle communications</li>
+        <li>Report directly to the CEO; present growth strategy to the board on a quarterly basis</li>
+      </ul>
+    </div>
+
+    <hr class="divider">
+
+    <div class="jd-section">
+      <div class="jd-section-label">The team</div>
+      <p class="jd-body">The growth team comprises three direct reports: a paid media specialist with two years at Fintra, a content lead with a strong organic and SEO background, and a data analyst who joined from Revolut six months ago. The team is technically capable and operationally experienced; the priority hire is a senior leader who can set strategic direction and drive accountability.</p>
+    </div>
+
+    <hr class="divider">
+
+    <div class="jd-section">
+      <div class="jd-section-label">What we're looking for</div>
+      <ul class="jd-list">
+        <li>A demonstrable track record of scaling B2C growth at a technology company</li>
+        <li>Strong commercial judgement and confidence working with unit economics</li>
+        <li>Experience building and managing high-performing growth teams</li>
+        <li>Comfort operating in ambiguous environments and building process from scratch</li>
+        <li>Based in or willing to commute to London (Shoreditch) three to four days per week</li>
+      </ul>
+    </div>
+
+    <hr class="divider">
+
+    <div class="jd-section">
+      <div class="jd-section-label">Interview process</div>
+      <ul class="jd-list">
+        <li>Introductory call with the talent team (30 minutes)</li>
+        <li>Growth strategy conversation with the CEO (60 minutes)</li>
+        <li>Paid take-home growth audit (two to three hours)</li>
+        <li>Panel with the product and data leads (60 minutes)</li>
+        <li>Offer issued within five working days of the final interview</li>
+      </ul>
+    </div>
+
+    <button class="jd-apply-btn" onclick="alert('This would link to your ATS — e.g. Greenhouse or Lever')">Apply for this role →</button>
+  </div>
+
+  <!-- RIGHT: CHAT -->
+  <div class="chat-panel">
+    <div class="chat-header">
+      <div class="chat-header-top">
+        <div class="chat-avatar">L</div>
+        <div>
+          <div class="chat-header-title">Ask about this role</div>
+          <div class="chat-header-sub">Configured by Fintra · Powered by Lowdown</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="chat-messages" id="messages">
+      <div class="bubble-wrap them">
+        <div class="bubble them">Hi — I'm the Lowdown for this role. I can answer questions about the position, the team, compensation, culture, or anything else you'd want to know before deciding whether to apply. What would you like to know?</div>
+      </div>
+    </div>
+
+    <div class="chat-input-area">
+      <textarea class="chat-input" id="chat-input" placeholder="Ask anything about this role…" rows="1" onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+      <button class="chat-send" id="send-btn" onclick="sendMessage()" aria-label="Send">
+        <div class="send-icon"></div>
+      </button>
+    </div>
+    <div class="chat-footer-note">Answers configured by Fintra · This is a demo</div>
+  </div>
+</div>
+
+<script>
+const knowledge = [
+  {
+    keys: ['salary','base','pay','wage','compensation','£90','£120','money','how much','earn','paying','package'],
+    answer: "Base salary is £90,000–£120,000 depending on experience and seniority. That's a genuine range rather than a floor with a ceiling already decided — where you land is determined through the process. Total package on top includes equity, 25 days holiday, private healthcare, and a £1,000 annual L&D budget."
+  },
+  {
+    keys: ['equity','shares','options','vesting','vest','cliff','ownership','stake','emi','option'],
+    answer: "The equity range is 0.15–0.35%, structured as EMI options — the most tax-efficient scheme available in the UK, so worth understanding if you're not already familiar. Standard 4-year vest with a 1-year cliff, and refreshes are on the table after year two for strong performers. The exact percentage depends on seniority and how the conversations go, but there's genuine intent to make it meaningful at this stage of the company."
+  },
+  {
+    keys: ['why open','why exist','why is the role','why now','previous','left','last person','predecessor','backfill','new role','why hiring','why are you hiring'],
+    answer: "The previous Head of Growth left to start their own company — it was an amicable exit and they remain on good terms with the business. The seat has been open for six months deliberately; the decision was made at leadership level not to rush this hire given how central the role is. The team has been managed in the interim by the CEO."
+  },
+  {
+    keys: ['report to','reporting line','line manager','who do i report','who would i report','ceo','sarah','who will i work with','management structure'],
+    answer: "You report directly to the CEO, Sarah Chen. She's a former operator — she ran growth at a Series A fintech before co-founding Fintra — so she has genuine fluency in what the role involves. Her style is high expectations combined with high autonomy. She'll want weekly syncs and a clear narrative for board meetings, but she hires for ownership and steps back deliberately once trust is established. She's direct; feedback happens in the room rather than in quarterly reviews."
+  },
+  {
+    keys: ['team','direct report','who manage','people manage','my team','the team','three people','3 people','growth team','who would i manage','paid specialist','content lead','analyst'],
+    answer: "Three direct reports: a paid media specialist who has been at Fintra for two years and knows the accounts in significant depth; a content lead who came from an agency background, particularly strong on SEO; and a data analyst who joined from Revolut six months ago — technically sharp, still building Fintra context. The team is collaborative, experienced, and has been running without a senior lead above them for six months. They're ready for direction, not hand-holding."
+  },
+  {
+    keys: ['challenge','problem','fire','difficult','issue','fix','broken','walking into','biggest','what needs fixing','retention problem','cac','cost per acquisition','what is wrong'],
+    answer: "Two things, candidly. CAC has increased over the last two quarters — partly market conditions, partly a channel mix that hasn't had senior eyes on it. And 90-day retention needs attention; the product team believes it's likely an onboarding issue, but no one has had the bandwidth to run the experiments properly. The data is there, the team is capable, and there's real CEO sponsorship to address both. The priority for someone joining is to diagnose before prescribing."
+  },
+  {
+    keys: ['remote','office','hybrid','wfh','work from home','commute','in person','onsite','on-site','shoreditch','days a week','flexible working','location','where is'],
+    answer: "The expectation is three to four days in the Shoreditch office. Mondays are a full team day — consistent across the business and not negotiable. The rest of the week has flexibility. The team tends to cluster on Wednesdays and Thursdays, so those are natural in-office days. Fully remote isn't on the table for this role given the seniority and the fact you'd be leading a team in person."
+  },
+  {
+    keys: ['culture','environment','vibe','values','what is it like','working there','pace','work life balance','hours','atmosphere','day to day','what\'s the culture'],
+    answer: "Fast-paced without being chaotic — there's a meaningful difference, and Fintra is conscious of it. Series B means process exists but hasn't become bureaucratic. Decisions are expected to be made and owned; there isn't a committee culture. Feedback is direct and happens in the room. The team skews mid-to-late twenties, majority ex-startup or ex-agency, motivated by the problem rather than the perks. Long hours aren't glorified, but nor is rigid presenteeism."
+  },
+  {
+    keys: ['interview','process','stages','rounds','how many rounds','assessment','take home','task','test','timeline','how long does','selection process','hiring process'],
+    answer: "Four stages. An intro call with the talent team (30 minutes — largely mutual fit and basics). A growth strategy conversation with Sarah, the CEO (60 minutes — a genuine conversation, not a formal presentation). A paid take-home growth audit using Fintra's actual data, two to three hours. Then a panel with the product and data leads (60 minutes). The target is an offer within five working days of the final interview. Start to finish is typically three to four weeks if diaries align."
+  },
+  {
+    keys: ['take home','takehome','paid task','paid assessment','audit','case study','homework','is the task paid','work sample','what is the task'],
+    answer: "The growth audit is paid. It's a genuine piece of work using Fintra's actual data — not a generic case study with fictional numbers. The brief covers a specific growth question the business is currently sitting with. Most candidates spend two to three hours; there's no expectation to go beyond that. It's designed to start a conversation rather than function as a pass/fail gate — the panel debrief is as important as the submission itself."
+  },
+  {
+    keys: ['progress','progression','career','senior','vp','vice president','promote','grow','path','next step','move up','advance','what is the trajectory','head of to'],
+    answer: "The role sits on the senior leadership team as Head of Growth. The natural trajectory as Fintra scales toward Series C and beyond is VP of Growth — that conversation is expected to happen and doesn't need to be negotiated after two years of proving yourself. The leadership team here is being built, not inherited, which means genuine scope to shape what the function becomes rather than stepping into a fixed mould."
+  },
+  {
+    keys: ['series c','fundraise','raise','funding','runway','investors','vc','round','financial position','cash','how long'],
+    answer: "Fintra closed its Series B 14 months ago and is tracking toward a Series C in the next 18 to 24 months, subject to hitting growth targets. Runway is comfortable — that's as specific as makes sense to share here. The Series C timeline is part of what makes this hire consequential: the business needs someone who can own the growth narrative going into that process, not someone who joins after the fact."
+  },
+  {
+    keys: ['product','what does fintra do','what is fintra','company','what do they do','business model','revenue model','customer','user','app','platform','what does the company','what does it do','tell me about fintra','fintra actually','what does fintra actually'],
+    answer: "Fintra is a B2C personal finance platform — it helps people manage spending, savings, and short-term financial planning in one place. The core insight it was built on is that most finance apps tell you what happened with your money; Fintra is designed to tell you what to do next. It operates on a freemium model: the free tier covers the basics, while the paid tier unlocks more detailed analytics, automated savings rules, and forward-looking forecasting. The customer base is predominantly UK-based with early traction in Ireland. Revenue is subscription-led, and the business has been growing consistently since its Series B."
+  },
+  {
+    keys: ['why not','why shouldn\'t','not a good fit','might not be','who is not','who isn\'t','not right for me','not suitable','wrong role','reasons not to','downsides','cons','not take this','not apply','not for me'],
+    answer: "Honestly? A few genuine reasons this might not be the right move. First, the office commitment is real — three to four days in Shoreditch isn't flexible on principle, and if that doesn't work for your life, it's worth acknowledging now rather than at offer stage. Second, this is a role that requires you to build a lot from scratch: process, strategy, cadence. If you perform better with an established playbook to inherit, the ambiguity here will be frustrating. Third, board exposure comes early — presenting to investors quarterly is built into the role, and if that's not something you're ready for or interested in, you'd be uncomfortable within a few months. And fourth, the salary ceiling is £120k; if you're currently above that and not motivated by the equity upside, the comp may not stack up. None of those are reasons not to apply if they don't apply to you — but they're the honest friction points."
+  },
+  {
+    keys: ['metrics','numbers','mrr','revenue','growth rate','how many users','customers','how big is','kpi','current performance','results','what are the numbers'],
+    answer: "The specifics are shared under NDA at interview stage, so I'll keep this directional. The business has grown consistently quarter on quarter since the Series B, with the exception of the CAC trend already mentioned. Paid channels have been the primary acquisition driver; there's meaningful headroom in organic and partnerships that hasn't been properly resourced yet. You'd get full access to the dashboards from the first interview onwards."
+  },
+  {
+    keys: ['management style','how does she manage','ceo style','hands on','micromanage','autonomy','trust','decision making','leadership style','how does sarah work','working with sarah'],
+    answer: "Sarah's style is characterised by high expectations and high autonomy — both at once. She tends to over-involve herself in the first few weeks while calibrating trust, then steps back deliberately. She's commercially sharp and will push back on growth initiatives she doesn't think pencil out, so you'd need to come to conversations with the numbers. She's also direct in giving negative feedback without it becoming personal — which most people find refreshing once they've adjusted."
+  },
+  {
+    keys: ['benefit','perks','holiday','annual leave','days off','healthcare','health','pension','budget','l&d','learning and development','parental','maternity','paternity','bupa'],
+    answer: "25 days annual leave plus bank holidays. Private healthcare through Bupa. A £1,000 L&D budget per year — actively encouraged, not just listed. Pension at 5% employer contribution. Enhanced parental leave. EMI options as part of the equity package. The Shoreditch office is well-resourced. There's also a paid take-home during the interview process — a small signal, but an intentional one about how the business operates."
+  },
+  {
+    keys: ['start date','when can i start','notice period','how soon','available from','when do you need','urgency','asap','timeline for joining'],
+    answer: "There's flexibility on start date — the business has managed the interim for six months and isn't going to make a rushed hire. That said, there's genuine momentum to close this in the next six to eight weeks if the right candidate is in the process. Notice periods are understood and factored in. If yours is unusually long, it's worth raising early so it can be planned around rather than becoming an issue at offer stage."
+  },
+  {
+    keys: ['competitor','competition','competing with','vs','rival','market landscape','monzo','revolut','starling','plum','cleo','who are the competitors'],
+    answer: "The direct competitive set includes Cleo, Plum, and to a lesser extent the budgeting features within Monzo and Revolut. Fintra's positioning is differentiated — less focused on spending psychology and more on forward-looking financial planning. The honest assessment is that the market is competitive at the mass-market end, and differentiation at the product level matters more than it did two years ago. Part of what this hire needs to navigate is identifying the acquisition channels where the positioning actually lands."
+  },
+  {
+    keys: ['tools','stack','tech','software','analytics','mixpanel','amplitude','google analytics','ga4','notion','slack','what tools do you use','what software'],
+    answer: "The growth team runs on a fairly standard stack: Google Analytics 4 and Mixpanel for product analytics, Looker for dashboards, HubSpot for lifecycle communications, and Google and Meta Ads managers for paid. The data analyst has built a solid set of internal reports. The team uses Notion for documentation and Slack day-to-day. No legacy tooling issues to inherit — it's a reasonably clean setup."
+  },
+  {
+    keys: ['board','investor','venture capital','who backed','backer','shareholder','ownership','who are the investors','who invested'],
+    answer: "Fintra is backed by two lead VCs — one UK-based, one US-based — alongside a group of angel investors, mostly operators from the fintech space. The board meets quarterly. As Head of Growth, you'd present at those meetings, so there's direct board exposure built into the role from the outset. The investors are engaged but not interventionist — they've been consistent in their backing of the current management team."
+  },
+  {
+    keys: ['diversity','inclusion','dei','diverse team','gender balance','representation','equal opportunities','inclusive','minority'],
+    answer: "The leadership team is currently majority male, which Fintra acknowledges as something to actively address. The broader team has better representation. There isn't a formal DEI programme at this stage of the company, but it's a topic that comes up in leadership discussions and informs hiring decisions. It's a fair thing to push on further in the process — the talent team will give you an honest picture rather than a polished one."
+  },
+  {
+    keys: ['recent','recently','what has changed','direction','strategy','news','update','last year','this year','what is new','any updates'],
+    answer: "The most significant shift in the last year has been a deliberate move toward improving retention over acquisition volume. The business recognised that top-of-funnel growth wasn't the constraint — drop-off at 30 and 90 days was. That's informed the product roadmap and is central to what this hire needs to own. The strategic direction is clear; the execution is what needs senior ownership."
+  },
+  {
+    keys: ['90 day','first 90','onboarding','first few months','first month','first week','what would i do','what do you expect','what does success look like','first 3 months','what is expected'],
+    answer: "The first 30 days is about listening and diagnosing — getting into the data, understanding the team, and building a point of view on the CAC and retention problems without rushing to fix them. By 60 days, a shared hypothesis and prioritised testing plan. By 90 days, experiments are live, the team has clarity on direction, and there's a coherent growth narrative ready for the next board meeting. A month-six warning sign, in Sarah's words, is someone who's still in diagnosis mode."
+  },
+  {
+    keys: ['negotiate','negotiable','flexible on salary','top of range','above the range','above range','more than stated','push on compensation','room to move','can you go higher'],
+    answer: "The range is genuine — there's no hidden ceiling already decided. Where someone lands depends on experience and how the process goes. If your current package sits above the top of the range, that's worth discussing directly with the talent team; there's budget flexibility at the right seniority level. The equity range also has some flexibility. It's a conversation worth having early and openly rather than surfacing at offer stage."
+  },
+  {
+    keys: ['should i apply','worth applying','is this right for me','right move','am i a good fit','do i fit','is this role right','good fit for','suited to','is it worth'],
+    answer: "That's genuinely worth thinking through. The role suits someone who has owned a growth function before and wants to do it again at a stage where the problems are real, the team is capable, and the scope is wide. It's probably not the right fit if you're looking for a highly structured environment, a large team beneath you, or a role without board exposure. If you have specific questions about whether your background maps to what they're looking for, the talent team will give you a direct answer — they're not trying to fill a seat."
+  },
+];
+
+const fallbacks = [
+  "That's not something I have a prepared answer for — it would be better raised directly with the talent team, who can give you the full picture. Is there anything else about the role I can help with?",
+  "I don't have enough context to answer that one well, and I'd rather not speculate. Worth flagging on the intro call — the team are very responsive. Anything else I can help clarify?",
+  "That one sits outside what I've been configured with for this role. The talent team would be the right people to ask. Happy to answer anything else about the position, the team, or the process.",
+  "Good question — and I want to make sure you get an accurate answer rather than a guess from me. That's one to raise directly with the hiring team. Is there anything else I can help you think through?"
+];
+let fallbackIdx = 0;
+
+function matchAnswer(input) {
+  const lower = input.toLowerCase();
+  let best = null, bestScore = 0;
+  for (const topic of knowledge) {
+    let score = 0;
+    for (const k of topic.keys) { if (lower.includes(k)) score++; }
+    if (score > bestScore) { bestScore = score; best = topic; }
+  }
+  if (best && bestScore > 0) return best.answer;
+  return fallbacks[fallbackIdx++ % fallbacks.length];
+}
+
+const msgs    = document.getElementById('messages');
+const input   = document.getElementById('chat-input');
+const sendBtn = document.getElementById('send-btn');
+let busy = false;
+
+function scrollDown() { msgs.scrollTop = msgs.scrollHeight; }
+
+function addBubble(text, side) {
+  const wrap = document.createElement('div');
+  wrap.className = `bubble-wrap ${side}`;
+  const bub = document.createElement('div');
+  bub.className = `bubble ${side}`;
+  bub.textContent = text;
+  wrap.appendChild(bub);
+  msgs.appendChild(wrap);
+  scrollDown();
+}
+
+function showTyping() {
+  const wrap = document.createElement('div');
+  wrap.className = 'bubble-wrap them';
+  wrap.id = 'typing';
+  wrap.innerHTML = `<div class="typing-bubble"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>`;
+  msgs.appendChild(wrap);
+  scrollDown();
+}
+function hideTyping() { const t = document.getElementById('typing'); if (t) t.remove(); }
+
+async function sendMessage() {
+  if (busy) return;
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = ''; input.style.height = '';
+  busy = true; sendBtn.disabled = true;
+  addBubble(text, 'us');
+  showTyping();
+  const delay = 800 + Math.random() * 700;
+  setTimeout(() => {
+    hideTyping();
+    addBubble(matchAnswer(text), 'them');
+    busy = false; sendBtn.disabled = false;
+    input.focus();
+  }, delay);
+}
+
+function handleKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+}
+function autoResize(el) {
+  el.style.height = '';
+  el.style.height = Math.min(el.scrollHeight, 80) + 'px';
+}
+</script>
+</body>
+</html>
