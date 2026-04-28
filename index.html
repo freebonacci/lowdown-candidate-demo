@@ -57,7 +57,7 @@
   .bubble-wrap{display:flex;flex-direction:column;gap:2px}
   .bubble-wrap.them{align-items:flex-start}
   .bubble-wrap.us{align-items:flex-end}
-  .bubble{padding:10px 13px;border-radius:12px;font-size:13.5px;line-height:1.55;max-width:88%;animation:bubbleIn .25s cubic-bezier(.2,.8,.2,1)}
+  .bubble{padding:10px 13px;border-radius:12px;font-size:13.5px;line-height:1.6;max-width:88%;animation:bubbleIn .25s cubic-bezier(.2,.8,.2,1)}
   @keyframes bubbleIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
   .bubble.them{background:var(--paper);color:var(--ink);border-bottom-left-radius:3px}
   .bubble.us{background:var(--forest);color:var(--mint);border-bottom-right-radius:3px}
@@ -75,13 +75,30 @@
   .chat-send:hover{background:var(--forest-deep)}
   .chat-send:disabled{opacity:.4;cursor:default}
   .send-icon{width:0;height:0;border-top:5px solid transparent;border-bottom:5px solid transparent;border-left:9px solid var(--mint);margin-left:2px}
-  .chat-footer-note{font-size:10.5px;color:var(--muted-2);font-family:'JetBrains Mono',monospace;text-align:center;padding:.4rem 0 .1rem;letter-spacing:.2px}
+  .chat-footer-note{font-size:10px;color:var(--muted-2);font-family:'JetBrains Mono',monospace;text-align:center;padding:.5rem 1rem .4rem;letter-spacing:.15px;line-height:1.5;border-top:.5px solid var(--line-soft)}
+
+  /* Apply modal */
+  .modal-backdrop{position:fixed;inset:0;background:rgba(20,20,18,.5);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:100;padding:1.5rem}
+  .modal-backdrop.open{display:flex}
+  .modal{background:var(--ivory);border:.5px solid var(--line);border-radius:14px;padding:2rem;width:100%;max-width:400px;box-shadow:0 24px 60px -16px rgba(20,20,18,.35);position:relative}
+  .modal-close{position:absolute;top:12px;right:14px;background:none;border:none;cursor:pointer;font-size:20px;color:var(--muted);line-height:1;padding:4px 8px}
+  .modal-close:hover{color:var(--ink)}
+  .modal-eyebrow{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--forest);letter-spacing:.8px;text-transform:uppercase;margin-bottom:.4rem}
+  .modal-title{font-family:'Lora',serif;font-size:22px;font-weight:400;color:var(--ink);margin-bottom:.35rem;letter-spacing:-.3px}
+  .modal-sub{font-size:13px;color:var(--ink-3);font-weight:300;line-height:1.55;margin-bottom:1.5rem}
+  .ats-options{display:flex;flex-direction:column;gap:10px}
+  .ats-btn{display:flex;align-items:center;gap:12px;background:#FFF;border:.5px solid var(--line);border-radius:9px;padding:13px 15px;cursor:pointer;text-align:left;transition:border-color .15s;font-family:'DM Sans',sans-serif}
+  .ats-btn:hover{border-color:var(--forest)}
+  .ats-logo{width:32px;height:32px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0}
+  .ats-btn .label{font-size:14px;font-weight:500;color:var(--ink)}
+  .ats-btn .sub{font-size:12px;color:var(--muted);margin-top:1px}
+  .ats-btn .arrow{margin-left:auto;color:var(--muted-2);font-size:16px}
 
   @media(max-width:860px){
     html,body{overflow:auto}
     .main{grid-template-columns:1fr;height:auto;overflow:visible}
     .jd-panel{overflow:visible;border-right:none;border-bottom:.5px solid var(--line);max-height:none}
-    .chat-panel{height:600px}
+    .chat-panel{height:620px}
   }
 </style>
 </head>
@@ -168,7 +185,7 @@
       </ul>
     </div>
 
-    <button class="jd-apply-btn" onclick="alert('This would link to your ATS — e.g. Greenhouse or Lever')">Apply for this role →</button>
+    <button class="jd-apply-btn" onclick="document.getElementById('apply-modal').classList.add('open')">Apply for this role →</button>
   </div>
 
   <!-- RIGHT: CHAT -->
@@ -195,123 +212,471 @@
         <div class="send-icon"></div>
       </button>
     </div>
-    <div class="chat-footer-note">Answers configured by Fintra · This is a demo</div>
+    <div class="chat-footer-note">This demo uses keyword matching. The real product will use AI semantic search to provide more accurate and tailored responses.</div>
+  </div>
+</div>
+
+<!-- Apply modal -->
+<div class="modal-backdrop" id="apply-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="document.getElementById('apply-modal').classList.remove('open')">×</button>
+    <div class="modal-eyebrow">Apply now</div>
+    <div class="modal-title">Head of Growth</div>
+    <div class="modal-sub">Choose how you'd like to submit your application. You'll be taken to Fintra's application page.</div>
+    <div class="ats-options">
+      <button class="ats-btn" onclick="alert('Opens Ashby application form')">
+        <div class="ats-logo" style="background:#1a1a2e;color:#fff">A</div>
+        <div>
+          <div class="label">Apply via Ashby</div>
+          <div class="sub">Fintra's primary application system</div>
+        </div>
+        <div class="arrow">→</div>
+      </button>
+      <button class="ats-btn" onclick="alert('Opens LinkedIn Easy Apply')">
+        <div class="ats-logo" style="background:#0077b5;color:#fff">in</div>
+        <div>
+          <div class="label">Apply via LinkedIn</div>
+          <div class="sub">Use your LinkedIn profile</div>
+        </div>
+        <div class="arrow">→</div>
+      </button>
+    </div>
   </div>
 </div>
 
 <script>
+// Close modal on backdrop click
+document.getElementById('apply-modal').addEventListener('click', function(e){
+  if(e.target === this) this.classList.remove('open');
+});
+
+// ─── KNOWLEDGE BASE: 100 TOPICS ───────────────────────────────────────────────
 const knowledge = [
+
+  // ── COMPENSATION ──────────────────────────────────────────────────────────
   {
-    keys: ['salary','base','pay','wage','compensation','£90','£120','money','how much','earn','paying','package'],
-    answer: "Base salary is £90,000–£120,000 depending on experience and seniority. That's a genuine range rather than a floor with a ceiling already decided — where you land is determined through the process. Total package on top includes equity, 25 days holiday, private healthcare, and a £1,000 annual L&D budget."
+    keys: ['salary','base pay','base salary','wage','how much does it pay','how much will i earn','compensation','£90','£120','what are they paying','what is the pay'],
+    answer: "The base salary range is £90,000 to £120,000. That reflects a genuine spread based on experience and seniority — the conversation about where you'd land happens during the process. Most people at this level come in somewhere between the midpoint and the top of the range."
   },
   {
-    keys: ['equity','shares','options','vesting','vest','cliff','ownership','stake','emi','option'],
-    answer: "The equity range is 0.15–0.35%, structured as EMI options — the most tax-efficient scheme available in the UK, so worth understanding if you're not already familiar. Standard 4-year vest with a 1-year cliff, and refreshes are on the table after year two for strong performers. The exact percentage depends on seniority and how the conversations go, but there's genuine intent to make it meaningful at this stage of the company."
+    keys: ['negotiate salary','negotiable','above the range','push on pay','room on salary','can i ask for more','flexible on salary','go higher than','above £120'],
+    answer: "The range is real, and there's some flexibility at the top end for the right candidate. If you're currently earning above £120k, that's worth raising directly with the talent team rather than waiting for an offer. The equity range also has room to move. Bringing it up early is fine and expected."
   },
   {
-    keys: ['why open','why exist','why is the role','why now','previous','left','last person','predecessor','backfill','new role','why hiring','why are you hiring'],
-    answer: "The previous Head of Growth left to start their own company — it was an amicable exit and they remain on good terms with the business. The seat has been open for six months deliberately; the decision was made at leadership level not to rush this hire given how central the role is. The team has been managed in the interim by the CEO."
+    keys: ['bonus','performance bonus','annual bonus','incentive','commission'],
+    answer: "There's no formal bonus scheme at this stage. Compensation is structured as base salary plus equity, with the expectation that equity is where the meaningful upside sits. If that's something you rely on, it's worth flagging early."
   },
   {
-    keys: ['report to','reporting line','line manager','who do i report','who would i report','ceo','sarah','who will i work with','management structure'],
-    answer: "You report directly to the CEO, Sarah Chen. She's a former operator — she ran growth at a Series A fintech before co-founding Fintra — so she has genuine fluency in what the role involves. Her style is high expectations combined with high autonomy. She'll want weekly syncs and a clear narrative for board meetings, but she hires for ownership and steps back deliberately once trust is established. She's direct; feedback happens in the room rather than in quarterly reviews."
+    keys: ['equity','shares','options','emi','option scheme','ownership stake','equity package','share scheme'],
+    answer: "The equity range is 0.15% to 0.35%, structured as EMI options. EMI is the most tax-efficient option scheme available in the UK — the headline percentage matters, but so does the structure. Standard four-year vest with a one-year cliff. Refreshes are available after year two for strong performers."
   },
   {
-    keys: ['team','direct report','who manage','people manage','my team','the team','three people','3 people','growth team','who would i manage','paid specialist','content lead','analyst'],
-    answer: "Three direct reports: a paid media specialist who has been at Fintra for two years and knows the accounts in significant depth; a content lead who came from an agency background, particularly strong on SEO; and a data analyst who joined from Revolut six months ago — technically sharp, still building Fintra context. The team is collaborative, experienced, and has been running without a senior lead above them for six months. They're ready for direction, not hand-holding."
+    keys: ['vesting','vest schedule','cliff','how does vesting work','when do options vest','option vest'],
+    answer: "Options vest over four years with a one-year cliff. That means nothing vests in the first twelve months; after that, options vest monthly in equal instalments over the remaining three years. It's a standard structure. Refresh grants are reviewed at the two-year mark."
   },
   {
-    keys: ['challenge','problem','fire','difficult','issue','fix','broken','walking into','biggest','what needs fixing','retention problem','cac','cost per acquisition','what is wrong'],
-    answer: "Two things, candidly. CAC has increased over the last two quarters — partly market conditions, partly a channel mix that hasn't had senior eyes on it. And 90-day retention needs attention; the product team believes it's likely an onboarding issue, but no one has had the bandwidth to run the experiments properly. The data is there, the team is capable, and there's real CEO sponsorship to address both. The priority for someone joining is to diagnose before prescribing."
+    keys: ['acquisition','acquired','buyout','exit','what happens to equity','equity if company sold','options if acquired'],
+    answer: "The specifics depend on the terms of any acquisition and will be set out in the option agreement. Standard practice at this stage is for options to either accelerate on exit or convert to acquirer equity — that's a question worth raising directly with the talent team once you're at offer stage, as the detail matters."
   },
   {
-    keys: ['remote','office','hybrid','wfh','work from home','commute','in person','onsite','on-site','shoreditch','days a week','flexible working','location','where is'],
-    answer: "The expectation is three to four days in the Shoreditch office. Mondays are a full team day — consistent across the business and not negotiable. The rest of the week has flexibility. The team tends to cluster on Wednesdays and Thursdays, so those are natural in-office days. Fully remote isn't on the table for this role given the seniority and the fact you'd be leading a team in person."
+    keys: ['pension','retirement','employer contribution','workplace pension'],
+    answer: "Pension is at a 5% employer contribution on top of your salary. The company uses a standard workplace pension scheme. You can contribute more from your own salary if you want to."
   },
   {
-    keys: ['culture','environment','vibe','values','what is it like','working there','pace','work life balance','hours','atmosphere','day to day','what\'s the culture'],
-    answer: "Fast-paced without being chaotic — there's a meaningful difference, and Fintra is conscious of it. Series B means process exists but hasn't become bureaucratic. Decisions are expected to be made and owned; there isn't a committee culture. Feedback is direct and happens in the room. The team skews mid-to-late twenties, majority ex-startup or ex-agency, motivated by the problem rather than the perks. Long hours aren't glorified, but nor is rigid presenteeism."
+    keys: ['healthcare','private health','medical','bupa','health insurance','private medical'],
+    answer: "Private healthcare is included through Bupa. It covers you and there's an option to add dependants at a subsidised rate. It kicks in from day one."
   },
   {
-    keys: ['interview','process','stages','rounds','how many rounds','assessment','take home','task','test','timeline','how long does','selection process','hiring process'],
-    answer: "Four stages. An intro call with the talent team (30 minutes — largely mutual fit and basics). A growth strategy conversation with Sarah, the CEO (60 minutes — a genuine conversation, not a formal presentation). A paid take-home growth audit using Fintra's actual data, two to three hours. Then a panel with the product and data leads (60 minutes). The target is an offer within five working days of the final interview. Start to finish is typically three to four weeks if diaries align."
+    keys: ['holiday','annual leave','days off','how many days','leave allowance','pto','time off'],
+    answer: "25 days annual leave per year, plus bank holidays. That's 33 days in total for most people. Bank holidays are separate — they don't come out of your 25 days."
   },
   {
-    keys: ['take home','takehome','paid task','paid assessment','audit','case study','homework','is the task paid','work sample','what is the task'],
-    answer: "The growth audit is paid. It's a genuine piece of work using Fintra's actual data — not a generic case study with fictional numbers. The brief covers a specific growth question the business is currently sitting with. Most candidates spend two to three hours; there's no expectation to go beyond that. It's designed to start a conversation rather than function as a pass/fail gate — the panel debrief is as important as the submission itself."
+    keys: ['buy holiday','extra holiday','purchase leave','additional days off','buy more leave','sell holiday'],
+    answer: "There's no formal holiday purchase scheme in place at the moment. It's something the business has discussed but hasn't implemented. The 25 days plus bank holidays is the current entitlement."
   },
   {
-    keys: ['progress','progression','career','senior','vp','vice president','promote','grow','path','next step','move up','advance','what is the trajectory','head of to'],
-    answer: "The role sits on the senior leadership team as Head of Growth. The natural trajectory as Fintra scales toward Series C and beyond is VP of Growth — that conversation is expected to happen and doesn't need to be negotiated after two years of proving yourself. The leadership team here is being built, not inherited, which means genuine scope to shape what the function becomes rather than stepping into a fixed mould."
+    keys: ['sick leave','sick pay','illness','if i get ill','sick days','statutory sick'],
+    answer: "Standard sick leave applies. There's no separate enhanced sick pay scheme documented at this stage, though the business handles short-term illness pragmatically. For longer-term medical situations, that's a conversation worth having with the talent team directly."
   },
   {
-    keys: ['series c','fundraise','raise','funding','runway','investors','vc','round','financial position','cash','how long'],
-    answer: "Fintra closed its Series B 14 months ago and is tracking toward a Series C in the next 18 to 24 months, subject to hitting growth targets. Runway is comfortable — that's as specific as makes sense to share here. The Series C timeline is part of what makes this hire consequential: the business needs someone who can own the growth narrative going into that process, not someone who joins after the fact."
+    keys: ['parental leave','maternity','paternity','shared parental','family leave','baby','child'],
+    answer: "Enhanced parental leave is in place, above the statutory minimum for both primary and secondary carers. The exact terms are part of the employment contract — worth confirming at offer stage if it's relevant to you."
   },
   {
-    keys: ['product','what does fintra do','what is fintra','company','what do they do','business model','revenue model','customer','user','app','platform','what does the company','what does it do','tell me about fintra','fintra actually','what does fintra actually'],
-    answer: "Fintra is a B2C personal finance platform — it helps people manage spending, savings, and short-term financial planning in one place. The core insight it was built on is that most finance apps tell you what happened with your money; Fintra is designed to tell you what to do next. It operates on a freemium model: the free tier covers the basics, while the paid tier unlocks more detailed analytics, automated savings rules, and forward-looking forecasting. The customer base is predominantly UK-based with early traction in Ireland. Revenue is subscription-led, and the business has been growing consistently since its Series B."
+    keys: ['christmas','shutdown','office closed','christmas break','festive','end of year close','christmas holiday'],
+    answer: "The office closes over Christmas. The shutdown period typically runs from Christmas Eve through to New Year's Day. Days taken from the Christmas shutdown do not come out of your 25-day holiday allowance."
   },
   {
-    keys: ['why not','why shouldn\'t','not a good fit','might not be','who is not','who isn\'t','not right for me','not suitable','wrong role','reasons not to','downsides','cons','not take this','not apply','not for me'],
-    answer: "Honestly? A few genuine reasons this might not be the right move. First, the office commitment is real — three to four days in Shoreditch isn't flexible on principle, and if that doesn't work for your life, it's worth acknowledging now rather than at offer stage. Second, this is a role that requires you to build a lot from scratch: process, strategy, cadence. If you perform better with an established playbook to inherit, the ambiguity here will be frustrating. Third, board exposure comes early — presenting to investors quarterly is built into the role, and if that's not something you're ready for or interested in, you'd be uncomfortable within a few months. And fourth, the salary ceiling is £120k; if you're currently above that and not motivated by the equity upside, the comp may not stack up. None of those are reasons not to apply if they don't apply to you — but they're the honest friction points."
+    keys: ['learning','development','l&d','training budget','learning budget','professional development','courses','conferences','upskill'],
+    answer: "There's a £1,000 annual L&D budget and it's actively encouraged to use it. That covers courses, conferences, books, or external coaching. There's no approval committee — it's yours to spend on things relevant to your role and development."
   },
   {
-    keys: ['metrics','numbers','mrr','revenue','growth rate','how many users','customers','how big is','kpi','current performance','results','what are the numbers'],
-    answer: "The specifics are shared under NDA at interview stage, so I'll keep this directional. The business has grown consistently quarter on quarter since the Series B, with the exception of the CAC trend already mentioned. Paid channels have been the primary acquisition driver; there's meaningful headroom in organic and partnerships that hasn't been properly resourced yet. You'd get full access to the dashboards from the first interview onwards."
+    keys: ['perks','benefits','other benefits','what else','what other perks','extras'],
+    answer: "The core package is base salary, EMI equity, 25 days holiday plus bank holidays, Bupa private healthcare, 5% employer pension, £1,000 L&D budget, and enhanced parental leave. The office is well set up in Shoreditch. There's no gym membership or similar at the moment — the business has kept benefits focused rather than supplemented with low-value extras."
+  },
+
+  // ── HOURS & WORKING LIFE ──────────────────────────────────────────────────
+  {
+    keys: ['what time','start time','get in','morning','when does the day start','what time do people arrive','when do people come in'],
+    answer: "There's no formal start time. Most people on the team are in by nine or nine-thirty. Monday is the most structured day — the all-hands meets at nine-thirty, so that's effectively the anchor. Outside of that, the expectation is that you're responsive during business hours and present for your team's working day."
   },
   {
-    keys: ['management style','how does she manage','ceo style','hands on','micromanage','autonomy','trust','decision making','leadership style','how does sarah work','working with sarah'],
-    answer: "Sarah's style is characterised by high expectations and high autonomy — both at once. She tends to over-involve herself in the first few weeks while calibrating trust, then steps back deliberately. She's commercially sharp and will push back on growth initiatives she doesn't think pencil out, so you'd need to come to conversations with the numbers. She's also direct in giving negative feedback without it becoming personal — which most people find refreshing once they've adjusted."
+    keys: ['finish time','clock off','end of day','leave the office','what time do people leave','work till','how late','long hours','when does work end'],
+    answer: "There's no official finish time. Most of the senior team wraps up between six and six-thirty on average. That said, this is a leadership role — there will be periods that require more, particularly around board meetings or a fundraise. It's not a culture where long hours are worn as a badge, but it's also not a nine-to-five role."
   },
   {
-    keys: ['benefit','perks','holiday','annual leave','days off','healthcare','health','pension','budget','l&d','learning and development','parental','maternity','paternity','bupa'],
-    answer: "25 days annual leave plus bank holidays. Private healthcare through Bupa. A £1,000 L&D budget per year — actively encouraged, not just listed. Pension at 5% employer contribution. Enhanced parental leave. EMI options as part of the equity package. The Shoreditch office is well-resourced. There's also a paid take-home during the interview process — a small signal, but an intentional one about how the business operates."
+    keys: ['core hours','flexible hours','flexitime','flexi','when am i expected','hours policy','working hours policy'],
+    answer: "There's no formal core hours policy. The expectation is that you're available and responsive during the standard business day and present for your team. The flexibility is real but it's built around outcomes, not hours — if the team needs you, you're there."
   },
   {
-    keys: ['start date','when can i start','notice period','how soon','available from','when do you need','urgency','asap','timeline for joining'],
-    answer: "There's flexibility on start date — the business has managed the interim for six months and isn't going to make a rushed hire. That said, there's genuine momentum to close this in the next six to eight weeks if the right candidate is in the process. Notice periods are understood and factored in. If yours is unusually long, it's worth raising early so it can be planned around rather than becoming an issue at offer stage."
+    keys: ['typical day','day in the life','what would a day look like','what does a normal day','day to day','daily routine','what will i actually be doing'],
+    answer: "It varies significantly week to week, but a representative day might look like: reviewing growth dashboards and overnight performance data in the morning, a team standup, a working session on channel strategy or a campaign brief, a cross-functional meeting with product or data, and some focused time on the board narrative or investor prep. As a senior leader, your time splits between setting direction, unblocking the team, and managing upward. There's less execution and more architecture."
   },
   {
-    keys: ['competitor','competition','competing with','vs','rival','market landscape','monzo','revolut','starling','plum','cleo','who are the competitors'],
-    answer: "The direct competitive set includes Cleo, Plum, and to a lesser extent the budgeting features within Monzo and Revolut. Fintra's positioning is differentiated — less focused on spending psychology and more on forward-looking financial planning. The honest assessment is that the market is competitive at the mass-market end, and differentiation at the product level matters more than it did two years ago. Part of what this hire needs to navigate is identifying the acquisition channels where the positioning actually lands."
+    keys: ['typical week','week look like','weekly rhythm','weekly structure','what happens each week'],
+    answer: "Monday is the anchor — all-hands, team planning, and one-to-ones typically sit here. Mid-week is usually the most meeting-heavy: cross-functional work with product and data, external meetings if relevant, and working sessions on growth initiatives. Towards the end of the week, people tend to move into more focused individual work. Friday afternoons are quiet by design — the culture doesn't celebrate back-to-back meetings."
   },
   {
-    keys: ['tools','stack','tech','software','analytics','mixpanel','amplitude','google analytics','ga4','notion','slack','what tools do you use','what software'],
-    answer: "The growth team runs on a fairly standard stack: Google Analytics 4 and Mixpanel for product analytics, Looker for dashboards, HubSpot for lifecycle communications, and Google and Meta Ads managers for paid. The data analyst has built a solid set of internal reports. The team uses Notion for documentation and Slack day-to-day. No legacy tooling issues to inherit — it's a reasonably clean setup."
+    keys: ['on call','out of hours','weekend','evenings','emergency','always on'],
+    answer: "There's no on-call requirement. Growth at this stage doesn't have the incident-response dynamic that engineering does. You'd be expected to stay across performance during key campaign periods, but that doesn't translate into weekend work as a norm."
   },
   {
-    keys: ['board','investor','venture capital','who backed','backer','shareholder','ownership','who are the investors','who invested'],
-    answer: "Fintra is backed by two lead VCs — one UK-based, one US-based — alongside a group of angel investors, mostly operators from the fintech space. The board meets quarterly. As Head of Growth, you'd present at those meetings, so there's direct board exposure built into the role from the outset. The investors are engaged but not interventionist — they've been consistent in their backing of the current management team."
+    keys: ['travel','business travel','how much travel','do i need to travel','client travel','fly','trip'],
+    answer: "Minimal travel is expected in this role. Occasional trips for industry events or partner meetings might come up once or twice a year, but it's not a travelling role. Everything core to the job happens in London."
   },
   {
-    keys: ['diversity','inclusion','dei','diverse team','gender balance','representation','equal opportunities','inclusive','minority'],
-    answer: "The leadership team is currently majority male, which Fintra acknowledges as something to actively address. The broader team has better representation. There isn't a formal DEI programme at this stage of the company, but it's a topic that comes up in leadership discussions and informs hiring decisions. It's a fair thing to push on further in the process — the talent team will give you an honest picture rather than a polished one."
+    keys: ['office','what is the office like','office space','workspace','desk','where is the office','shoreditch office','what is the workplace'],
+    answer: "The office is in Shoreditch, a ten-minute walk from Old Street station. It's a good space — not a converted warehouse but a proper fitted-out office with decent meeting rooms and a kitchen. The team has dedicated desks rather than hot-desking. It's the kind of environment that feels like a proper company rather than an early-stage startup."
   },
   {
-    keys: ['recent','recently','what has changed','direction','strategy','news','update','last year','this year','what is new','any updates'],
-    answer: "The most significant shift in the last year has been a deliberate move toward improving retention over acquisition volume. The business recognised that top-of-funnel growth wasn't the constraint — drop-off at 30 and 90 days was. That's informed the product roadmap and is central to what this hire needs to own. The strategic direction is clear; the execution is what needs senior ownership."
+    keys: ['dress code','what to wear','smart casual','formal','casual friday','attire','clothes'],
+    answer: "No formal dress code. Smart casual is the norm — people wear what they're comfortable in. Nobody is turning up in a suit, and nobody is in gym wear either. Use your judgement."
+  },
+
+  // ── LEAVE ─────────────────────────────────────────────────────────────────
+  {
+    keys: ['taking holiday','book leave','approve leave','is it easy to take leave','getting time off','holiday approval','book time off','leave policy','taking time off'],
+    answer: "Holiday is managed through the team directly. The expectation is reasonable notice for anything longer than a few days, and coordination with the team so there's no gap in coverage. It's not a culture that makes taking leave difficult — the 25 days are there to be used."
   },
   {
-    keys: ['90 day','first 90','onboarding','first few months','first month','first week','what would i do','what do you expect','what does success look like','first 3 months','what is expected'],
-    answer: "The first 30 days is about listening and diagnosing — getting into the data, understanding the team, and building a point of view on the CAC and retention problems without rushing to fix them. By 60 days, a shared hypothesis and prioritised testing plan. By 90 days, experiments are live, the team has clarity on direction, and there's a coherent growth narrative ready for the next board meeting. A month-six warning sign, in Sarah's words, is someone who's still in diagnosis mode."
+    keys: ['two weeks','long holiday','extended leave','three weeks','month off','long trip','consecutive leave','more than a week'],
+    answer: "Two or even three consecutive weeks is possible with reasonable advance notice. As a senior hire you'd be coordinating with the CEO and ensuring the team is covered. It's not actively discouraged, but it would need planning given the seniority of the role."
   },
   {
-    keys: ['negotiate','negotiable','flexible on salary','top of range','above the range','above range','more than stated','push on compensation','room to move','can you go higher'],
-    answer: "The range is genuine — there's no hidden ceiling already decided. Where someone lands depends on experience and how the process goes. If your current package sits above the top of the range, that's worth discussing directly with the talent team; there's budget flexibility at the right seniority level. The equity range also has some flexibility. It's a conversation worth having early and openly rather than surfacing at offer stage."
+    keys: ['bank holiday','public holiday','bank holidays included','how many bank holidays'],
+    answer: "Bank holidays are entirely separate from your 25-day allowance. You get the full standard UK bank holiday calendar on top — typically eight days a year, which brings the total to around 33 days."
+  },
+
+  // ── REMOTE / HYBRID ───────────────────────────────────────────────────────
+  {
+    keys: ['remote','hybrid','office days','work from home','wfh','how many days in office','in person','onsite','how often in office'],
+    answer: "Three to four days in the Shoreditch office is the expectation. It's genuinely hybrid rather than remote-first with an office option. The business is clear that this is a leadership role and in-person presence matters for the team culture and your effectiveness in it."
   },
   {
-    keys: ['should i apply','worth applying','is this right for me','right move','am i a good fit','do i fit','is this role right','good fit for','suited to','is it worth'],
-    answer: "That's genuinely worth thinking through. The role suits someone who has owned a growth function before and wants to do it again at a stage where the problems are real, the team is capable, and the scope is wide. It's probably not the right fit if you're looking for a highly structured environment, a large team beneath you, or a role without board exposure. If you have specific questions about whether your background maps to what they're looking for, the talent team will give you a direct answer — they're not trying to fill a seat."
+    keys: ['monday','which days','what days in office','days in the office','when are people in'],
+    answer: "Monday is the one fixed day — the all-hands and team planning sit on Mondays, so that's non-negotiable. Wednesday and Thursday tend to be the other popular in-office days. Tuesday and Friday are more flexible, and some people work from home on those days."
   },
+  {
+    keys: ['monday non-negotiable','must i come in monday','is monday flexible','exception to monday'],
+    answer: "Monday is the one fixed point in the week. It's where the all-hands meets and team planning happens. There's no exception to that as a general rule, though unusual one-offs are handled with common sense."
+  },
+  {
+    keys: ['work from home more','if i need to wfh','flexibility to work remotely','busy period wfh','wfh exception','temporary remote'],
+    answer: "There's flexibility for one-off situations. If you have something specific going on — a delivery, a medical appointment, a school run — the business is pragmatic. What it's not is a structure that allows consistently lower office attendance than the three-to-four-day expectation."
+  },
+  {
+    keys: ['work abroad','workation','work from another country','travel and work','work from europe','remote abroad','digital nomad'],
+    answer: "There's no formal policy on working abroad at the moment. Short-term arrangements for a week or two are handled case by case. Anything longer would require a conversation at leadership level given the tax and employment implications. It's not a standing offer."
+  },
+
+  // ── THE ROLE ──────────────────────────────────────────────────────────────
+  {
+    keys: ['success year one','what does success look like','first year','what do you expect in year one','year one target','goals for year one'],
+    answer: "Success in year one is diagnosing and fixing the CAC trend, stabilising 90-day retention, and building a team that's operating with clear direction and accountability. The expectation isn't to have transformed the business in twelve months — it's to have the right foundation in place and a credible Series C growth narrative ready."
+  },
+  {
+    keys: ['success year three','three year','long term','where do you see this role in three years','year three','long-term success'],
+    answer: "In three years, the expectation is that Fintra has completed a Series C and the growth function is scaling with the business. The Head of Growth at that stage would likely be VP of Growth, with a larger team and broader budget ownership. The trajectory depends on how the business performs, but the intent is to grow the person with the role."
+  },
+  {
+    keys: ['what will i learn','learning in this role','skill development','what skills will i build','grow in this role','what can i get from this'],
+    answer: "You'd develop significant experience presenting growth strategy to a board and working directly with investors — which is rare at this level. You'd build a track record of owning a full growth function through a fundraise cycle, which opens doors to more senior roles. You'd also get deep into unit economics at a company where the numbers genuinely matter to the outcome. For the right person, this is a role that accelerates a career by three or four years."
+  },
+  {
+    keys: ['exit opportunities','career after this','what comes next','where does this lead','what roles open up','after fintra','next career move'],
+    answer: "Strong exit opportunities from this role. Head of Growth or VP of Growth at a larger company, Chief Marketing Officer at a scale-up, or a Chief Growth Officer track. There's also a realistic path to a portfolio company role if the VC network resonates. Candidates who've owned growth through a Series B to C transition are in strong demand."
+  },
+  {
+    keys: ['strategic question','biggest question','key problem','what is the main challenge','central problem','top priority','most important thing'],
+    answer: "The central strategic question is how to grow efficiently at the top of the funnel while fixing leakage at the bottom. CAC is rising, retention is dropping, and the Series C narrative needs to hold both together. The person in this role needs to answer: what's the right channel mix, what's the retention lever, and how do they work together rather than against each other."
+  },
+  {
+    keys: ['budget','how much budget','growth budget','what budget do i own','spending power','marketing budget','paid budget'],
+    answer: "The total growth budget isn't disclosed at this stage, but it's meaningful — the business has been investing in paid acquisition as the primary channel and the budget reflects that. You'd have full ownership over how it's allocated across channels, subject to the commercial targets. The specifics would be shared at the later stages of the interview process."
+  },
+  {
+    keys: ['autonomy','how much autonomy','decision making','my call','independence','how much freedom','ownership'],
+    answer: "The expectation is significant autonomy. You'd be setting the strategy, owning the budget, and making the calls. Sarah would want to be informed and involved in major decisions, but the day-to-day is yours. It's a role for someone who wants ownership, not oversight."
+  },
+  {
+    keys: ['from scratch','build process','no process','inherited','inherit a playbook','build vs inherit','structure already there'],
+    answer: "A mix of both. There's an existing team, existing channels, and existing data — you're not starting from zero. But there's no growth strategy that someone handed over, and the processes around planning, prioritisation, and reporting are underdeveloped. Expect to build those from scratch."
+  },
+  {
+    keys: ['hardest part','most difficult','biggest challenge in the role','toughest part','what will be hard','what is difficult about this role'],
+    answer: "Probably the pace of context-building. You'd be stepping into a situation with real problems, a capable but direction-starved team, and a CEO who has strong views. Getting up to speed quickly enough to make credible decisions within the first 60 days is the most common difficulty at this level."
+  },
+  {
+    keys: ['fail','what would make someone fail','who would fail','failure','not work out','wrong hire','unsuccessful'],
+    answer: "Someone would struggle in this role if they need a highly structured environment to perform well, if they prefer executing a defined plan rather than setting one, or if they're not comfortable with direct feedback. The culture is fast and candid. People who need more process, more certainty, or more runway before making decisions tend to find it frustrating."
+  },
+
+  // ── THE TEAM ──────────────────────────────────────────────────────────────
+  {
+    keys: ['direct reports','my team','who do i manage','team structure','who works for me','reporting to me','who reports','manage who'],
+    answer: "Three direct reports: a paid media specialist who has been at Fintra for two years; a content lead from an agency background, strong on SEO; and a data analyst who joined from Revolut six months ago. All three are capable. They've been operating without a senior lead for six months and are ready for direction."
+  },
+  {
+    keys: ['how long have they been','team tenure','how experienced is the team','team background','team history'],
+    answer: "The paid specialist has two years at Fintra and knows the accounts well. The content lead has around four years total experience, the last two in a senior individual contributor role. The data analyst is newer — six months in — but technically strong. A mixed-tenure team, which is actually useful: institutional knowledge combined with fresh perspective."
+  },
+  {
+    keys: ['strengths weaknesses','team development areas','team gaps','what needs development','where does the team need help','team weaknesses'],
+    answer: "The paid specialist is strong on execution but hasn't had much exposure to strategy. The content lead produces good work but hasn't been pushed to own a channel end-to-end. The data analyst is technically capable but still building commercial context. None of those are problems — they're development opportunities for a good manager."
+  },
+  {
+    keys: ['internal candidate','applied internally','did anyone else apply','internal applicant','someone on the team want this job'],
+    answer: "One member of the team expressed interest in a more senior role. That conversation happened transparently, and the decision was made that an external hire with senior experience was the right approach at this stage. The relationship has been managed openly and there's no tension around it."
+  },
+  {
+    keys: ['growth and product','product relationship','cross functional','work with product','product team relationship','product collaboration'],
+    answer: "The relationship between growth and product is close and reasonably healthy. There are shared OKRs around activation and retention, and a standing weekly session between the two functions. The friction historically has been around prioritisation — growth wants fast tests, product has a longer backlog cycle. That's a common tension and one the Head of Growth needs to navigate proactively."
+  },
+  {
+    keys: ['growth and engineering','engineering relationship','work with engineers','engineering collaboration','engineering team'],
+    answer: "Growth doesn't have dedicated engineering resource at the moment — requests go through the main product engineering team. That creates some friction around speed. It's an area the business is actively looking at. As Head of Growth, advocating for a dedicated growth engineer or a ring-fenced capacity arrangement is likely to be part of the early conversations."
+  },
+  {
+    keys: ['team decisions','how decisions are made','decision process','who decides','decision making in the team'],
+    answer: "Decisions within the growth team are largely yours to make. Cross-functional decisions — anything involving product prioritisation, budget above a certain threshold, or external commitments — involve Sarah. The culture is to decide and tell, not to consult and decide. That requires confidence and good judgement."
+  },
+  {
+    keys: ['team meetings','how often does the team meet','meeting cadence','standup','weekly meeting','1-1','one to one'],
+    answer: "The growth team has a weekly planning session on Mondays and a shorter standup mid-week. One-to-ones with direct reports are weekly, thirty minutes each. The expectation is that you run those consistently — the previous setup was ad hoc and the team noticed."
+  },
+
+  // ── CEO / MANAGER ─────────────────────────────────────────────────────────
+  {
+    keys: ['sarah background','who is sarah','sarah chen','ceo background','founder background','who founded fintra','co-founder'],
+    answer: "Sarah Chen co-founded Fintra four years ago. Before that she ran growth at a Series A consumer fintech, and before that she was at a large financial services company in a commercial role. She has a background in product and growth rather than finance, which shapes how she thinks about the business. She's in her mid-thirties and has been the primary driver of the culture."
+  },
+  {
+    keys: ['how long ceo','how long has sarah','how long running','how long has she been ceo','years as ceo'],
+    answer: "Sarah has been running Fintra since founding it four years ago. She's been the sole CEO throughout — there's no exec chair or co-founder sharing the role."
+  },
+  {
+    keys: ['management style','sarah style','how does she manage','hands on','micromanage','how does the ceo work','working with sarah','ceo style','leadership style'],
+    answer: "Sarah is commercially focused, direct, and expects people to own their area. She'll be closely involved in the first few weeks while calibrating trust, then steps back once she's confident in someone. She pushes back hard on anything she doesn't think makes commercial sense, so you need to come to conversations with the data. Feedback is given in the room, not saved for reviews."
+  },
+  {
+    keys: ['one to one ceo','how often meet sarah','1-1 with ceo','meet with sarah','ceo meetings'],
+    answer: "Weekly one-to-ones, typically 45 minutes. Sarah uses them to stay across the growth picture, ask hard questions, and discuss blockers. She's not a passive participant — expect it to feel more like a working session than a check-in."
+  },
+  {
+    keys: ['how does she give feedback','sarah feedback','ceo feedback style','how feedback works','performance review','feedback culture'],
+    answer: "Direct and in real time. Sarah doesn't wait for scheduled reviews to give feedback — if something isn't working, she'll say so. That's uncomfortable for some people initially and valued highly by most once they're used to it. Formal performance reviews happen twice a year but they rarely contain surprises."
+  },
+  {
+    keys: ['has she managed','experience managing','managed this level before','previous reports','who has she managed'],
+    answer: "Sarah has managed senior individual contributors and team leads throughout her career. A Head of Growth at this seniority is at the upper end of what she's directly managed before, which is worth knowing. She's self-aware about that and has taken external coaching on senior leadership. It's a genuine relationship rather than a transactional one."
+  },
+  {
+    keys: ['what do people say about sarah','what do people say about working for her','glassdoor','reviews','previous employees','what do former employees say'],
+    answer: "The honest picture: people who do well under Sarah tend to be self-starters who welcome direct feedback and don't need to be managed. People who've struggled have tended to need more structure or reassurance than she naturally provides. The business has low attrition overall, which suggests the cultural fit is working for most people."
+  },
+  {
+    keys: ['why difficult hire','why has this taken so long','why is it hard to fill','why six months','what went wrong','why is the seat empty'],
+    answer: "The business was clear from the start that it wasn't going to rush this hire. Two candidates went through the full process and didn't proceed — one withdrew, one wasn't the right fit. The role requires a specific combination of seniority, commercial sharpness, and willingness to operate in an ambiguous environment, and that's a narrower pool than a generic growth hire."
+  },
+
+  // ── COMPANY & CULTURE ─────────────────────────────────────────────────────
+  {
+    keys: ['mission','what is fintra mission','why does fintra exist','company purpose','vision','what are you trying to do'],
+    answer: "Fintra's mission is to help people make better financial decisions in real time, not just understand the ones they've already made. The belief behind it is that most personal finance tools are retrospective — they show you what happened. Fintra is built to be forward-looking and prescriptive."
+  },
+  {
+    keys: ['what does fintra do','what is fintra','what does the company do','tell me about fintra','fintra product','what is the product','what do they build','what does it do','fintra actually'],
+    answer: "Fintra is a B2C personal finance platform. It helps users manage spending, savings, and short-term financial planning in one place, with a forward-looking approach rather than a purely retrospective one. It operates on a freemium model — the free tier covers budgeting basics, the paid tier adds detailed analytics, automated savings rules, and financial forecasting. Revenue is subscription-led. The customer base is primarily UK-based, with early traction in Ireland."
+  },
+  {
+    keys: ['how does fintra make money','business model','revenue model','how do you charge','subscription','freemium','pricing'],
+    answer: "Subscription revenue. The free tier exists to drive acquisition and activation. The paid tier — where the business earns — unlocks more detailed analytics and automation features. The conversion rate from free to paid is a key metric and one of the core growth levers."
+  },
+  {
+    keys: ['how many people','company size','headcount','how big is fintra','how many employees','team size','how large'],
+    answer: "Around 55 people across all functions. The growth team is three people. Product and engineering is the largest function by headcount. It's large enough to have proper functions but small enough that most people know each other."
+  },
+  {
+    keys: ['average tenure','how long do people stay','how long has the team been there','staff turnover','attrition','retention rate people','employee retention'],
+    answer: "Average tenure is around two and a half years, which is healthy for a Series B company. Voluntary attrition is low. The business hasn't had a significant wave of departures. That's a reasonable indicator of cultural stability."
+  },
+  {
+    keys: ['why do people leave','who has left','who left','departures','turnover reasons','why do employees leave'],
+    answer: "The most common reason people have left is for more senior roles elsewhere — particularly people who've been at Fintra for three or more years and outgrown their position. A small number have left because the pace wasn't right for them. No pattern of management-driven departures."
+  },
+  {
+    keys: ['why do people stay','why stay at fintra','what keeps people','what do people like','employee satisfaction'],
+    answer: "People tend to cite the problem being genuinely interesting, the team quality, and the degree of ownership they get. For a Series B company it punches above its weight on quality of hire. The equity upside is also cited as a retention factor — people who joined early have meaningful positions."
+  },
+  {
+    keys: ['culture','what is the culture','day to day culture','culture like','working environment','what is it like to work there','vibe','team atmosphere'],
+    answer: "Direct, fast-moving, and outcome-focused. It's not a company that has a culture deck or a set of branded values on the wall — it's more implicit than that. People are trusted to get on with things. There's a high tolerance for ambiguity and a low tolerance for politics. Most people who stay beyond the first three months tend to thrive."
+  },
+  {
+    keys: ['political','office politics','hierarchy','internal politics','toxic','difficult people','difficult environment'],
+    answer: "Low on politics by Series B standards. The team is relatively flat and Sarah doesn't play favourites in a visible way. As with any company, there are interpersonal dynamics, but it's not an environment where navigating politics is a significant part of the job."
+  },
+  {
+    keys: ['diversity','inclusion','dei','gender','diverse team','representation','equal opportunities','minority','ethnicity'],
+    answer: "The leadership team is majority male and predominantly white, which is acknowledged as something to improve. The broader team has somewhat better representation. There's no formal DEI programme at this stage. It's a fair topic to raise in the process — the talent team will give you an honest picture."
+  },
+  {
+    keys: ['values','company values','do values mean anything','what are the values','stated values','core values'],
+    answer: "Fintra doesn't have a formally documented set of values in the traditional sense. The principles that actually govern how the business operates are: move fast, be direct, own the outcome, and don't hide problems. Those are lived rather than displayed."
+  },
+
+  // ── GROWTH & STRATEGY ─────────────────────────────────────────────────────
+  {
+    keys: ['series c','fundraise','next round','raising money','next raise','fundraising timeline','series c plan','when series c'],
+    answer: "The Series C is being targeted in the next 18 to 24 months, subject to hitting the growth milestones the board has signed off on. The growth trajectory coming out of this hire will be a central part of the investor story. Runway from the Series B is comfortable — the fundraise is about growth capital, not survival."
+  },
+  {
+    keys: ['growth targets','what are the targets','revenue target','user growth target','kpi targets','this year target','annual target'],
+    answer: "The specific targets are shared under NDA during the interview process. Directionally: the business needs to reverse the CAC trend and improve 90-day retention. The commercial targets are set but the path to hitting them is what this hire is expected to define."
+  },
+  {
+    keys: ['what channels are working','current channels','top channels','best performing channel','channel mix','acquisition channels'],
+    answer: "Paid search and paid social have been the primary acquisition channels — Google and Meta respectively. The content and SEO channel has potential but has been under-resourced. Partnerships haven't been formally explored yet. The channel that's working best in raw volume is Meta; the one with the best CAC profile is currently SEO."
+  },
+  {
+    keys: ['what has been tried','what failed','what didn\'t work','previous experiments','what have you tested','failed initiatives'],
+    answer: "Referral programmes were tested and didn't generate meaningful volume at this stage of the product lifecycle. Some influencer partnerships were explored but didn't convert at acceptable CAC. The data from those tests is available — it's not a blank slate."
+  },
+  {
+    keys: ['competitor','competition','who are the competitors','competitive landscape','market','monzo','revolut','starling','plum','cleo','emma'],
+    answer: "The direct competitive set is Cleo, Plum, and Emma. The budgeting features within Monzo and Revolut are adjacent but aimed at a different use case. Fintra's differentiation is in forward-looking financial planning rather than retrospective spending analysis. The competitive moat is still being established — that's part of what makes the growth role strategically important."
+  },
+  {
+    keys: ['defensible','moat','competitive advantage','what makes fintra different','why fintra','unique','differentiation'],
+    answer: "The strongest differentiation is the forward-looking model — Fintra's engine analyses spending patterns and income to project financial outcomes and suggest actions. That's more complex to build than a spending tracker, which creates some product defensibility. The network effects aren't strong yet. Brand is still early. The advantage is currently in product quality."
+  },
+  {
+    keys: ['product roadmap','what is being built','upcoming features','product plans','what is the product team working on','pipeline features'],
+    answer: "The product roadmap for the next two quarters is heavily weighted toward onboarding and activation improvements — the hypothesis is that fixing the first 30 days of the user experience will improve 90-day retention. Beyond that, there's work planned on the forecasting engine. The roadmap is shared in detail during the later stages of the interview process."
+  },
+
+  // ── FINANCIALS ────────────────────────────────────────────────────────────
+  {
+    keys: ['current revenue','what is the revenue','mrr','arr','how much revenue','revenue numbers','how much money do you make'],
+    answer: "Revenue figures are shared under NDA at interview stage. The business is growing consistently — that's as specific as makes sense here. You'd get full access to the commercial picture from the first formal interview."
+  },
+  {
+    keys: ['profitable','profitability','are you profitable','making money','break even','burn rate','cash flow'],
+    answer: "Fintra is not yet profitable — it's investing in growth ahead of profitability, which is standard for a Series B company in this market. The burn rate is managed carefully and runway is healthy. The path to profitability is part of the Series C conversation."
+  },
+  {
+    keys: ['runway','how long is runway','how much cash','how long can you operate','financial runway','how long before next raise'],
+    answer: "Runway is comfortable following the Series B. It's not a company in a race to raise in the next six months. The Series C is a growth raise rather than a necessity, which puts the business in a reasonably strong negotiating position."
+  },
+  {
+    keys: ['who are the investors','investors','backers','vc','venture capital','who backed fintra','who invested','who funds fintra'],
+    answer: "Two lead VCs — one UK-based, one US-based — plus a small group of angel investors who are mostly senior operators from the fintech space. The investors are engaged and supportive. They meet the board quarterly and the relationship is collaborative rather than pressurised."
+  },
+  {
+    keys: ['what do investors expect','investor expectations','board expectations','what does the board want','investor pressure'],
+    answer: "The primary investor expectation is growth metric improvement leading into a Series C raise — specifically around CAC, retention, and monthly active users. The board is supportive of the current management team and isn't pushing for short-term revenue at the expense of a sustainable model."
+  },
+
+  // ── INTERVIEW PROCESS ─────────────────────────────────────────────────────
+  {
+    keys: ['interview stages','how many stages','interview process','what are the steps','how does the process work','selection process','hiring process','how do you hire'],
+    answer: "Four stages. An introductory call with the talent team — 30 minutes, focused on mutual fit and the basics. A growth strategy conversation with Sarah, the CEO — 60 minutes, a genuine back-and-forth rather than a formal presentation. A paid take-home growth audit — two to three hours using real Fintra data. Then a panel with the product and data leads — 60 minutes. Offer within five working days of the final interview."
+  },
+  {
+    keys: ['take home','take-home task','growth audit','the task','homework','case study','work sample','is it paid','paid assessment','what is the task'],
+    answer: "The take-home is paid. It's a genuine brief using Fintra's actual data — not a hypothetical case. Most candidates spend two to three hours on it. It's not a test with a right answer; it's a starting point for a conversation. The panel discussion that follows it is as important as what you submit."
+  },
+  {
+    keys: ['how long process','how long does it take','timeline for process','when will i hear back','process duration','how many weeks'],
+    answer: "Three to four weeks from intro call to offer, assuming diaries align. The business is moving at pace on this hire. If there are gaps in availability, the talent team will work around them."
+  },
+  {
+    keys: ['when do you want to hire','when are you looking to hire','urgency to hire','how soon do you need someone','hiring deadline','how soon are you looking'],
+    answer: "The target is to close the hire within the next six to eight weeks. There's genuine momentum and the business isn't being slow about it. If you're a strong candidate and have a long notice period, that's understood and can be worked around."
+  },
+  {
+    keys: ['how many candidates','how many people applying','how competitive','how many in process','shortlist','pool of candidates'],
+    answer: "A small number of candidates are in the process simultaneously. It's not a high-volume funnel — the business is being selective. If you're speaking with the talent team, you're in serious consideration."
+  },
+  {
+    keys: ['strong candidate','what makes a good candidate','what are you looking for','ideal candidate','who gets the job','what impresses you'],
+    answer: "Candidates who do well in this process tend to demonstrate three things: a clear point of view on growth — they have opinions, not just experience. Commercial rigour — they speak in numbers and understand unit economics. And self-awareness — they know what kind of environment they perform in and are honest about it."
+  },
+
+  // ── FIT & SELF-ASSESSMENT ─────────────────────────────────────────────────
+  {
+    keys: ['ideal background','what background','experience needed','what experience','what have i done','requirements'],
+    answer: "The strongest background is someone who has owned a B2C growth function at a startup or scale-up and can demonstrate the commercial impact of that ownership. People management experience matters. Sector experience in fintech is useful but not required — the principles of the role transfer. What doesn't transfer well is a purely B2B background or a background that's heavily agency rather than in-house."
+  },
+  {
+    keys: ['b2b experience','b2b background','does b2b count','only b2b','b2b growth experience','business to business'],
+    answer: "B2B growth experience is relevant but not a perfect match. The channels, the CAC dynamics, and the retention mechanics are different enough that a strong B2C operator will have an easier time. B2B experience doesn't disqualify you, but you'd need to demonstrate an understanding of how B2C growth works and ideally some direct exposure to it."
+  },
+  {
+    keys: ['fintech experience','finance background','do i need fintech','sector experience','financial services','do i need to know finance'],
+    answer: "Fintech experience is useful but not a requirement. The business cares more about growth fundamentals than sector knowledge. You'd pick up the regulatory and product context quickly. Several people on the team came from non-fintech backgrounds."
+  },
+  {
+    keys: ['why not take this role','why shouldn\'t i','not a good fit','who is this not right for','reasons not to apply','not suitable','downsides','cons','what are the negatives','not for everyone'],
+    answer: "There are a few genuine reasons this might not be the right role. The office commitment is real — three to four days in Shoreditch, with Monday fixed. If that doesn't fit your life, it's better to know that now. The role requires building structure where little exists, which suits some people and frustrates others. Board exposure comes early and is expected to be comfortable. And the salary ceiling is £120k — if you're significantly above that and not motivated by the equity, the comp may not work."
+  },
+  {
+    keys: ['should i apply','worth applying','is this right for me','am i a good fit','suited for me','good fit for','is this role right','is it worth applying'],
+    answer: "Worth applying if you've owned a growth function before, want real strategic ownership, and are comfortable with the ambiguity of a Series B environment. Probably not the right move if you prefer inheriting a structured playbook, need a large team beneath you to be effective, or are looking for a role without board-level exposure. If you're unsure, the talent team will give you a straight read — they're not trying to fill a seat at any cost."
+  },
+  {
+    keys: ['what would worry you','what worries the hiring team','red flags','what are you concerned about','concerns about candidates','what puts you off a candidate'],
+    answer: "The things that tend to concern the team during the process: candidates who talk about growth in terms of activities rather than outcomes, people who've been in large-team environments and haven't built or managed at a senior level themselves, and anyone who seems more motivated by the title than the problem. Self-awareness is valued highly — candidates who've diagnosed their own working style tend to do well."
+  },
+  {
+    keys: ['what question should i ask','what haven\'t i asked','what else should i know','anything else i should ask','question i should be asking','what am i missing'],
+    answer: "A few worth raising on the call: what does Sarah think went wrong with the two candidates who didn't progress? What does the board think the biggest risk to the Series C is? And what would the team say about the culture if you asked them off the record? Those tend to reveal more than the standard questions."
+  },
+
+  // ── TOOLS & TECH ──────────────────────────────────────────────────────────
+  {
+    keys: ['tools','tech stack','software','what tools do you use','what software','analytics tools','growth stack','what platforms','mixpanel','ga4','google analytics','hubspot','looker','notion','slack'],
+    answer: "The growth stack is GA4 and Mixpanel for product and web analytics, Looker for internal dashboards and reporting, HubSpot for lifecycle email and CRM, and Google and Meta Ads managers for paid. The team uses Notion for documentation and Slack for day-to-day communication. It's a clean setup with no significant legacy tooling to unpick."
+  },
+  {
+    keys: ['hard to learn tools','learning curve tools','do i need to know','how long to learn tools','tool experience','should i know mixpanel','ga4 experience','must i know the tools','tool proficiency'],
+    answer: "You don't need to be an expert in every tool from day one. Mixpanel and GA4 are the most important to have working knowledge of — the data analyst can run queries, but you need to be fluent enough to interrogate the numbers yourself. HubSpot is relatively straightforward to pick up. Looker takes a few weeks to navigate confidently but you wouldn't be building dashboards yourself. If you've worked with any modern analytics stack the context transfers quickly."
+  },
+
+  // ── PREDECESSOR ───────────────────────────────────────────────────────────
+  {
+    keys: ['previous head of growth','last person in role','predecessor','who was in this role','what happened to the last person','why did they leave','person before me','former head of growth','left to start','their own company','previous hire'],
+    answer: "The previous Head of Growth, James, was at Fintra for two and a half years and left to start his own company in the consumer fintech space. It was a planned exit — he stayed through a transition period and left on good terms. He built the team and the initial channel infrastructure. The reason the role has been open for six months is that the business decided to take its time with the hire rather than backfill quickly. James is still in contact with the team and speaks positively about the company."
+  },
+
 ];
 
+// ─── FALLBACKS ────────────────────────────────────────────────────────────────
 const fallbacks = [
-  "That's not something I have a prepared answer for — it would be better raised directly with the talent team, who can give you the full picture. Is there anything else about the role I can help with?",
-  "I don't have enough context to answer that one well, and I'd rather not speculate. Worth flagging on the intro call — the team are very responsive. Anything else I can help clarify?",
-  "That one sits outside what I've been configured with for this role. The talent team would be the right people to ask. Happy to answer anything else about the position, the team, or the process.",
-  "Good question — and I want to make sure you get an accurate answer rather than a guess from me. That's one to raise directly with the hiring team. Is there anything else I can help you think through?"
+  "That's not something I have a prepared answer for. It's worth raising directly with the talent team, who can give you the full picture. Is there anything else about the role I can help with?",
+  "I don't have enough context to answer that one accurately. Worth flagging on the intro call — the team are responsive. Anything else I can help clarify?",
+  "That one's outside what I've been configured with for this role. The talent team would be the right people to ask. Happy to answer anything else about the position, the team, or the process.",
+  "Good question, but I'd rather point you to someone who can give you an accurate answer than guess. Raise it with the talent team. Is there anything else I can help with?"
 ];
 let fallbackIdx = 0;
 
@@ -320,15 +685,16 @@ function matchAnswer(input) {
   let best = null, bestScore = 0;
   for (const topic of knowledge) {
     let score = 0;
-    for (const k of topic.keys) { if (lower.includes(k)) score++; }
+    for (const k of topic.keys) { if (lower.includes(k)) score += k.split(' ').length; }
     if (score > bestScore) { bestScore = score; best = topic; }
   }
   if (best && bestScore > 0) return best.answer;
   return fallbacks[fallbackIdx++ % fallbacks.length];
 }
 
+// ─── UI ───────────────────────────────────────────────────────────────────────
 const msgs    = document.getElementById('messages');
-const input   = document.getElementById('chat-input');
+const inputEl = document.getElementById('chat-input');
 const sendBtn = document.getElementById('send-btn');
 let busy = false;
 
@@ -355,21 +721,20 @@ function showTyping() {
 }
 function hideTyping() { const t = document.getElementById('typing'); if (t) t.remove(); }
 
-async function sendMessage() {
+function sendMessage() {
   if (busy) return;
-  const text = input.value.trim();
+  const text = inputEl.value.trim();
   if (!text) return;
-  input.value = ''; input.style.height = '';
+  inputEl.value = ''; inputEl.style.height = '';
   busy = true; sendBtn.disabled = true;
   addBubble(text, 'us');
   showTyping();
-  const delay = 800 + Math.random() * 700;
   setTimeout(() => {
     hideTyping();
     addBubble(matchAnswer(text), 'them');
     busy = false; sendBtn.disabled = false;
-    input.focus();
-  }, delay);
+    inputEl.focus();
+  }, 800 + Math.random() * 600);
 }
 
 function handleKey(e) {
